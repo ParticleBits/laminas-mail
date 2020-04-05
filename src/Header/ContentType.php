@@ -51,7 +51,9 @@ class ContentType implements UnstructuredInterface
             $length = count($values);
 
             for ($i = 0; $i < $length; $i += 2) {
-                $value = $values[$i + 1];
+                $value = isset($values[$i + 1])
+                    ? $values[$i + 1]
+                    : '';
                 $value = trim($value, "'\" \t\n\r\0\x0B");
                 $header->addParameter($values[$i], $value);
             }
@@ -106,12 +108,15 @@ class ContentType implements UnstructuredInterface
      * Set the content type
      *
      * @param  string $type
+     * @param  bool $ignoreValidationExceptions
      * @throws Exception\InvalidArgumentException
      * @return ContentType
      */
-    public function setType($type)
+    public function setType($type, $ignoreValidationExceptions = true)
     {
-        if (! preg_match('/^[a-z-]+\/[a-z0-9.+-]+$/i', $type)) {
+        if (! preg_match('/^[a-z-]+\/[a-z0-9.+-]+$/i', $type)
+            && ! $ignoreValidationExceptions
+        ) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects a value in the format "type/subtype"; received "%s"',
                 __METHOD__,

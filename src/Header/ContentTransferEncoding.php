@@ -28,6 +28,14 @@ class ContentTransferEncoding implements HeaderInterface
     ];
 
     /**
+     * Misspelled encodings, used for corrections
+     * @var array
+     */
+    protected static $fixTransferEncodings = [
+        'quot-printed' => 'quoted-printable'
+    ];
+
+    /**
      * @var string
      */
     protected $transferEncoding;
@@ -90,6 +98,14 @@ class ContentTransferEncoding implements HeaderInterface
     {
         // Per RFC 1521, the value of the header is not case sensitive
         $transferEncoding = strtolower($transferEncoding);
+        // Remove trailing semicolon
+        $transferEncoding = rtrim($transferEncoding, ';');
+        // Fix any encodings that are misspelled
+        $transferEncoding = str_replace(
+            array_keys(static::$fixTransferEncodings),
+            array_values(static::$fixTransferEncodings),
+            $transferEncoding
+        );
 
         if (! in_array($transferEncoding, static::$allowedTransferEncodings)) {
             throw new Exception\InvalidArgumentException(sprintf(

@@ -153,8 +153,11 @@ abstract class HeaderWrap
             'output-charset' => $charset,
             'line-length' => $lineLength,
         ];
+        $base64preferences = array_merge($preferences, ['scheme' => 'B']);
 
-        $encoded = iconv_mime_encode('x-test', $value, $preferences);
+        // Check both quoted-printable (Q) and base64 (B)
+        $encoded = @iconv_mime_encode('x-test', $value, $preferences)
+            || @iconv_mime_encode('x-test', $value, $base64preferences);
 
         return (false !== $encoded);
     }

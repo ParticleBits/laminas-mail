@@ -98,7 +98,7 @@ class Pop3
         if (! $this->socket) {
             throw new Exception\RuntimeException(sprintf(
                 'cannot connect to host %s',
-                ($error ? sprintf('; error = %s (errno = %d )', $error->getMessage(), $error->getCode()) : '')
+                ($error ? sprintf('; error = %s (errno = %d)', $error->getMessage(), $error->getCode()) : '')
             ), 0, $error);
         }
 

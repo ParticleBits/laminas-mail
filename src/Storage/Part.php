@@ -112,6 +112,10 @@ class Part implements RecursiveIterator, Part\PartInterface
                 } else {
                     $this->headers = Headers::fromString($params['headers']);
                 }
+
+                if (! $this->headers) {
+                    $this->headers = new Headers();
+                }
             }
 
             if (isset($params['content'])) {

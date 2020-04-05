@@ -64,7 +64,11 @@ class Address implements Address\AddressInterface
      */
     public function __construct($email, $name = null, $comment = null)
     {
-        $emailAddressValidator = new EmailAddressValidator(Hostname::ALLOW_DNS | Hostname::ALLOW_LOCAL);
+        $emailAddressValidator = new EmailAddressValidator([
+            'allow' => Hostname::ALLOW_DNS | Hostname::ALLOW_LOCAL,
+            'strict' => false // do not adhere to strictest requirements in the spec
+        ]);
+
         if (! is_string($email) || empty($email)) {
             throw new Exception\InvalidArgumentException('Email must be a valid email address');
         }
@@ -73,10 +77,12 @@ class Address implements Address\AddressInterface
             throw new Exception\InvalidArgumentException('CRLF injection detected');
         }
 
+        /* We're ignoring this check in the fork as it's not needed
         if (! $emailAddressValidator->isValid($email)) {
             $invalidMessages = $emailAddressValidator->getMessages();
             throw new Exception\InvalidArgumentException(array_shift($invalidMessages));
         }
+        */
 
         if (null !== $name) {
             if (! is_string($name)) {
